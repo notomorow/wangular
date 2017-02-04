@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src = "wangular.js"></script>
+    <title>Title</title>
+</head>
+<body>
+    <div wyf-ctrl="parent" wyf-bind="a">
+        <p wyf-bind="a"></p>
+        <p wyf-bind="b"></p>
+        <p  wyf-ctrl="sub" wyf-bind = "b">
+            <button wyf-click="clickEvent"></button>
+        </p>
+    </div>
+</body>
+</html>
