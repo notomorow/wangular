@@ -6,12 +6,16 @@
     <title>Title</title>
 </head>
 <body>
-    <div wyf-ctrl="parent" wyf-bind="a">
-        <p wyf-bind="a"></p>
-        <p wyf-bind="b"></p>
-        <p  wyf-ctrl="sub" wyf-bind = "b">
-            <button wyf-click="clickEvent"></button>
-        </p>
-    </div>
+<div wyf-ctrl="parent" wyf-bind="a">
+    <p wyf-bind="a"></p>
+    <p wyf-bind="b"></p>
+    <p  wyf-ctrl="sub" wyf-bind = "b">
+        <button wyf-click="clickEvent"></button>
+        <wyfScope></wyfScope>
+        <wyf></wyf>
+        <wyfWrap></wyfWrap>
+
+    </p>
+</div>
 </body>
 </html>

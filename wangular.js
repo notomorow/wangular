@@ -11,6 +11,23 @@
     }
 
     function bianli(ele, parentScope) {
+        /*独立scope的directive*/
+        wyf.directiveFactories.forEach(function(directive, index){
+            if (ele.nodeName == directive.name.toUpperCase()){
+                if (typeof directive.entity.scope === 'object'){
+                    /*重复代码start*/
+                    var newScope = function (){
+                        Scope.call(this);
+                    }
+                    /*newScope.prototype = parentScope;*/
+                    var theScope = new newScope();
+                    parentScope = theScope;
+                    directive.entity.ctrl.call(theScope);
+                    /*重复代码end*/
+                }
+            }
+        });
+        /*ctrl*/
         if (ele.hasAttribute('wyf-ctrl')) {
             var name = ele.getAttribute('wyf-ctrl');
             var newScope = function (){
@@ -34,7 +51,7 @@
             }
         }
     }
-    function apply (){
+    function applyScope (){
         for (var i in wyf.scopes){
             var scope = wyf.scopes[i];
             for (var k in scope.watcher){
@@ -64,25 +81,64 @@
             var clickEvent = wyf.funcHook(scope[attr], scope);
             ele.addEventListener('click', clickEvent.bind(scope));
         }
+        wyf.directiveFactories.forEach(function(directive, index){
+            if (ele.nodeName == directive.name.toUpperCase()){
+                ele.innerHTML = directive.entity.template;
+            }
+        });
     }
-    window.onload = function(){
-        bianli(document.body);
+
+    function createDirective (name, fn){
+        wyf.directiveFactories.push({name:name, entity: fn()});
+    }
+    function funcHook(fn) {
+        return function () {
+            if (fn) {
+                fn.call(this);
+                applyScope();
+            }
+        }
+    }
+    function initDirectives (){
+
     }
     window.wyf = {
         createScope: createScope,
         scopeFactories: [],
+        directiveFactories: [],
         scopes: [],
         idIndex: 1,
-        funcHook: function(fn){
-            return function(){
-                fn.call(this);
-                apply();
-            }
-        }
+        directive: createDirective,
+        funcHook: funcHook,
+    }
+
+    window.onload = function(){
+        bianli(document.body);
     };
 
 })();
-
+wyf.directive('wyf', function(){
+    return {
+        template: '<div style="margin:10px" wyf-click="clickEvent">wyf标签</div>'
+    }
+});
+wyf.directive('wyfWrap', function(){
+    return {
+        template: '<p>this is a wyf tag<wyf></wyf></p>'
+    }
+});
+wyf.directive('wyfScope', function(){
+    return {
+        scope:{},
+        ctrl: function(scope){
+            this.tag = 'wyf-wrap';
+            this.clickEvent = function(){
+                alert(this.tag)
+            }
+        },
+        template: '<div style="margin:10px" wyf-click="clickEvent"><span wyf-bind="tag"></span>标签</div><wyf></wyf>'
+    }
+});
 wyf.createScope('parent', function(){
     console.log(111);
     this.a = 1;
